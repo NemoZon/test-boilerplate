@@ -1,7 +1,6 @@
-import { ObjectId } from "mongodb";
+import { BaseEntity } from '../base/entity'
 
-export interface ActionTypeData {
-    _id?: ObjectId;
+export interface ActionTypeData extends BaseEntity {
     name: string;
     color: string;
     max: number;
