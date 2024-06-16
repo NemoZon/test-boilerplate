@@ -5,11 +5,11 @@ import { ActionTypeData } from "./actionType";
 class ActionTypeRepository {
     private actionTypeCollection = mongodb.collection<ActionTypeData>('ActionType');
 
-    public async clear() {
+    public async clear(): Promise<void> {
         await this.actionTypeCollection.deleteMany({});
     }
 
-    public async insert(...data: ActionTypeData[]) {
+    public async insert(...data: ActionTypeData[]): Promise<void> {
         await this.actionTypeCollection.insertMany(data);
     }
 
