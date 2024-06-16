@@ -1,4 +1,10 @@
 /* eslint-disable */
+import dotenv from "dotenv"
+
+dotenv.config({
+  path: '.env.test',
+})
+
 export default {
   displayName: 'backend',
   preset: '../../jest.preset.js',
