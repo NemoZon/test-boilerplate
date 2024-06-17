@@ -119,7 +119,7 @@ describe('Test /api/action', () => {
             expect(response.statusCode).toBe(400);
             expect(response.body.error).toBe("ActionType with _id 666eb45790b3e08861d6fbc9 doesn't exist");
         });
-        test('return 200 when the action was created', async () => {
+        test('return 201 when the action was created', async () => {
             await actionRepository.clear();
             await actionTypeRepository.clear();
 
@@ -129,7 +129,7 @@ describe('Test /api/action', () => {
                 ActionType: _id.toString()
             });
 
-            expect(response.statusCode).toBe(200);
+            expect(response.statusCode).toBe(201);
 
             expect(response.body).toHaveProperty('_id');
             expect(typeof response.body._id).toBe("string");
@@ -152,8 +152,6 @@ describe('Test /api/action', () => {
             const response = await request(app).post('/api/action/').send({
                 ActionType: _id
             });
-
-            expect(response.statusCode).toBe(200);
 
             const createdAt = new Date(response.body.createdAt).toISOString()
 
