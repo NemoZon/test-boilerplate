@@ -4,7 +4,6 @@ import { app } from '../../src/app'
 import request from 'supertest';
 import { actionRepository, createActionData } from '../../src/action';
 import { ActionStatusEnum } from '../../src/action'
-import { Queue } from '../../src/services/queue';
 
 afterAll(async () => {
     await mongoClient.close();
