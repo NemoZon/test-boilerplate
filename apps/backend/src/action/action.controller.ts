@@ -64,7 +64,7 @@ export class ActionController {
                 return;
             }
 
-            res.status(200).json({ _id, ...actionData })
+            res.status(201).json({ _id, ...actionData })
         } catch (error) {
             console.error("Failed to fetch action types: ", error);
             if (error instanceof Error) {
