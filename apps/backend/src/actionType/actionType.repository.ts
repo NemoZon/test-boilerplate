@@ -9,6 +9,11 @@ class ActionTypeRepository {
         await this.actionTypeCollection.deleteMany({});
     }
 
+    public async insertOne(data: ActionTypeData): Promise<{ _id: ObjectId }> {
+        const insertOneResult = await this.actionTypeCollection.insertOne(data);
+        return { _id: insertOneResult.insertedId }
+    }
+
     public async insert(...data: ActionTypeData[]): Promise<void> {
         await this.actionTypeCollection.insertMany(data);
     }
