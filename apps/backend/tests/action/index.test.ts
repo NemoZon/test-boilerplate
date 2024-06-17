@@ -159,3 +159,36 @@ describe('Test /api/action', () => {
         });
     })
 })
+
+describe('DELETE /api/action/:id', () => {
+    test('return 200 if Action was deleted successful', async () => {
+        await actionRepository.clear();
+        await actionTypeRepository.clear();
+
+        const { _id: actionTypeId } = await actionTypeRepository.insertOne(createActionTypeData());
+
+        const now = new Date;
+        const { _id } = await actionRepository.insertOne(createActionData({
+            ActionType: actionTypeId,
+            createdAt: now,
+            status: ActionStatusEnum.WAITING
+        }))
+
+        const response = await request(app).delete(`/api/action/${_id?.toString()}`);
+
+        expect(response.statusCode).toBe(200);
+        expect(response.body).toBe(_id?.toString());
+    });
+    test('return 400 if the id is invalid', async () => {
+        const response = await request(app).delete(`/api/action/hello`);
+
+        expect(response.statusCode).toBe(400);
+        expect(response.body.error).toBe("Id is invalid ObjectId");
+    });
+    test("return 404 if the resource doesn't exist", async () => {
+        const response = await request(app).delete(`/api/action/666eb45790b3e08861d6fbc9`);
+
+        expect(response.statusCode).toBe(404);
+        expect(response.body.error).toBe("Action with _id 666eb45790b3e08861d6fbc9 doesn't exist");
+    });
+})
