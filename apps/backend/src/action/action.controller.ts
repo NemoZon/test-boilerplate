@@ -40,7 +40,7 @@ export class ActionController {
         }
     }
 
-    public static async createOne(req: Request, res: Response): Promise<ActionData | void> {
+    public static async createOne(req: Request, res: Response): Promise<void> {
         try {
             if (!req.body?.ActionType) {
                 res.status(400).json({ error: "ActionType doesn't exist" });
@@ -65,6 +65,33 @@ export class ActionController {
             }
 
             res.status(201).json({ _id, ...actionData })
+        } catch (error) {
+            console.error("Failed to fetch action types: ", error);
+            if (error instanceof Error) {
+                res.status(500).json({ error: "Internal server error", details: error.message });
+            } else {
+                res.status(500).json({ error: "Unknown error" });
+            }
+        }
+    }
+
+    public static async deleteOne(req: Request, res: Response): Promise<void> {
+        try {
+            const id = req.params.id
+            const objectIdRegex = /[0-9a-f]{24}/
+            if (!id || !objectIdRegex.test(id)) {
+                res.status(400).json({ error: "Id is invalid ObjectId" });
+                return;
+            }
+
+            const { _id, error } = await actionRepository.deleteOne(id)
+            
+            if (error) {
+                res.status(404).json({ error });
+                return;
+            }
+
+            res.status(200).json(_id)
         } catch (error) {
             console.error("Failed to fetch action types: ", error);
             if (error instanceof Error) {

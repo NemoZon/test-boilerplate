@@ -48,6 +48,18 @@ class ActionRepository {
 
         return result;
     }
+
+    public async deleteOne(_id: string): Promise<Partial<{ _id: ObjectId, error: string }>> {
+        const action = await this.findById(_id)
+        if (!action) {
+            return { error: `Action with _id ${_id} doesn't exist` }
+        }
+        await this.actionCollection.deleteOne({
+            _id: action._id,
+        });
+
+        return { _id: action._id };
+    }
 }
 
 export const actionRepository = new ActionRepository();
