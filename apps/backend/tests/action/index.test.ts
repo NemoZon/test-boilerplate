@@ -107,4 +107,67 @@ describe('Test /api/action', () => {
             expect(response.body.status).toBe(ActionStatusEnum.WAITING);
         });
     })
+    describe('POST /api/action/', () => {
+        test('return 400 if the body is not a valid Action', async () => {
+            const response = await request(app).post('/api/action/').send({
+                message: 'hello'
+            });
+
+            expect(response.statusCode).toBe(400);
+            expect(response.body.error).toBe('Invalid Action entity');
+        });
+        test('return 400 if the ActionType id is invalid', async () => {
+            await actionTypeRepository.clear();
+            const response = await request(app).post('/api/action/').send({
+                ActionType: '666eb45790b3e08861d6fbc9',
+            });
+
+            expect(response.statusCode).toBe(400);
+            expect(response.body.error).toBe("ActionType with _id 666eb45790b3e08861d6fbc9 doesn't exist");
+        });
+        test('return 200 when the action was created', async () => {
+            await actionRepository.clear();
+            await actionTypeRepository.clear();
+
+            await actionTypeRepository.insert(createActionTypeData());
+            const actionTypeResponse = await request(app).get('/api/actiontype');
+            const actionTypeId = actionTypeResponse.body[0]._id
+
+            const response = await request(app).post('/api/action/').send({
+                ActionType: actionTypeId
+            });
+   
+            expect(response.statusCode).toBe(200);
+
+            expect(response.body).toHaveProperty('_id');
+            expect(typeof response.body._id).toBe("string");
+
+            expect(response.body).toHaveProperty('ActionType');
+            expect(response.body.ActionType).toBe(actionTypeId);
+
+            expect(response.body).toHaveProperty('createdAt');
+            expect(new Date(response.body.createdAt).getTime()).not.toBeNaN()
+
+            expect(response.body.status).toBe(ActionStatusEnum.WAITING);
+        });
+        
+        test('createdAt is a server time in ISO 8601 format', async () => {
+            await actionRepository.clear();
+            await actionTypeRepository.clear();
+
+            await actionTypeRepository.insert(createActionTypeData());
+            const actionTypeResponse = await request(app).get('/api/actiontype');
+            const actionTypeId = actionTypeResponse.body[0]._id
+
+            const response = await request(app).post('/api/action/').send({
+                ActionType: actionTypeId
+            });
+   
+            expect(response.statusCode).toBe(200);
+
+            const createdAt = new Date(response.body.createdAt)
+
+            expect(createdAt.toISOString()).toBe(response.body.createdAt);
+        });
+    })
 })
