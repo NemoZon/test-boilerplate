@@ -4,6 +4,7 @@ import { app } from '../../src/app'
 import request from 'supertest';
 import { actionRepository, createActionData } from '../../src/action';
 import { ActionStatusEnum } from '../../src/action'
+import { Queue } from '../../src/services/queue';
 
 afterAll(async () => {
     await mongoClient.close();
@@ -49,6 +50,16 @@ describe('Test /api/action', () => {
             const response = await request(app).get('/api/action');
             expect(response.statusCode).toBe(200);
             expect(response.body).toEqual([]);
+        });
+    })
+    describe('GET /api/action/nextExecutionTime', () => {
+        test('return 200 and date in ISO 8601 format', async () => {
+            const response = await request(app).get('/api/action/nextExecutionTime');
+            const now = new Date()
+            expect(response.statusCode).toBe(200);
+
+            expect(new Date(response.body)).not.toBeNaN();
+            expect(new Date(response.body) >= now).toBeTruthy();
         });
     })
     describe('GET /api/action/:id', () => {
