@@ -12,10 +12,10 @@ describe('Test /api/actiontype', () => {
         test('return a status 200 and a list of 3 action types with correct properties and data types', async () => {
             await actionTypeRepository.populate(3, createActionTypeData)
             const response = await request(app).get('/api/actiontype');
-    
+
             expect(response.statusCode).toBe(200);
             expect(response.body.length).toBe(3);
-            expect(Object.keys(response.body[0])).toEqual(["_id", "name", "color","max"]);
+            expect(Object.keys(response.body[0])).toEqual(["_id", "name", "color", "max"]);
             expect(typeof response.body[0]._id).toBe("string");
             expect(typeof response.body[0].name).toBe("string");
             expect(typeof response.body[0].color).toBe("string");
@@ -42,12 +42,10 @@ describe('Test /api/actiontype', () => {
             expect(response.body.error).toBe('No action type found');
         });
         test('return 200 when the action type is found', async () => {
-            await actionTypeRepository.populate(1, createActionTypeData)
-            const actiontypeResponse = await request(app).get('/api/actiontype/');
-            const id = actiontypeResponse.body[0]._id
-            const response = await request(app).get(`/api/actiontype/${id}`);
+            const { _id } = await actionTypeRepository.insertOne(createActionTypeData())
+            const response = await request(app).get(`/api/actiontype/${_id.toString()}`);
             expect(response.statusCode).toBe(200);
-            expect(Object.keys(response.body)).toEqual(["_id", "name", "color","max"]);
+            expect(Object.keys(response.body)).toEqual(["_id", "name", "color", "max"]);
             expect(typeof response.body._id).toBe("string");
             expect(typeof response.body.name).toBe("string");
             expect(typeof response.body.color).toBe("string");

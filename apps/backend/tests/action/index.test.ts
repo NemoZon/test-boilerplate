@@ -29,20 +29,18 @@ describe('Test /api/action', () => {
             await actionRepository.clear();
             await actionTypeRepository.clear();
 
-            await actionTypeRepository.insert(createActionTypeData());
-            const actionTypeResponse = await request(app).get('/api/actiontype');
-            const actionTypeId = actionTypeResponse.body[0]._id
+            const { _id } = await actionTypeRepository.insertOne(createActionTypeData());
 
             const now = new Date;
             await actionRepository.insert(createActionData({
-                ActionType: actionTypeId,
+                ActionType: _id,
                 createdAt: now,
                 status: ActionStatusEnum.WAITING
             }))
 
             const response = await request(app).get('/api/action');
 
-            expect(response.body[0].ActionType).toBe(actionTypeId);
+            expect(response.body[0].ActionType).toBe(_id.toString());
             expect(new Date(response.body[0].createdAt)).toEqual(now);
             expect(response.body[0].status).toBe(ActionStatusEnum.WAITING);
         });
@@ -67,10 +65,11 @@ describe('Test /api/action', () => {
             expect(response.body.error).toBe('No action found');
         });
         test('return 200 when the action is found', async () => {
-            await actionRepository.populate(1, createActionData)
-            const actionResponse = await request(app).get('/api/action/');
-            const id = actionResponse.body[0]._id
-            const response = await request(app).get(`/api/action/${id}`);
+            const { _id: actionTypeId } = await actionTypeRepository.insertOne(createActionTypeData())
+            const { _id } = await actionRepository.insertOne(createActionData({
+                ActionType: actionTypeId
+            }))
+            const response = await request(app).get(`/api/action/${_id?.toString()}`);
 
             expect(response.statusCode).toBe(200);
 
@@ -86,23 +85,18 @@ describe('Test /api/action', () => {
             await actionRepository.clear();
             await actionTypeRepository.clear();
 
-            await actionTypeRepository.insert(createActionTypeData());
-            const actionTypeResponse = await request(app).get('/api/actiontype');
-            const actionTypeId = actionTypeResponse.body[0]._id
+            const { _id: actionTypeId } = await actionTypeRepository.insertOne(createActionTypeData());
 
             const now = new Date;
-            await actionRepository.insert(createActionData({
+            const { _id } = await actionRepository.insertOne(createActionData({
                 ActionType: actionTypeId,
                 createdAt: now,
                 status: ActionStatusEnum.WAITING
             }))
 
-            const actionsResponse = await request(app).get('/api/action');
-            const id = actionsResponse.body[0]._id
+            const response = await request(app).get(`/api/action/${_id?.toString()}`);
 
-            const response = await request(app).get(`/api/action/${id}`);
-
-            expect(response.body.ActionType).toBe(actionTypeId);
+            expect(response.body.ActionType).toBe(actionTypeId.toString());
             expect(new Date(response.body.createdAt)).toEqual(now);
             expect(response.body.status).toBe(ActionStatusEnum.WAITING);
         });
@@ -114,7 +108,7 @@ describe('Test /api/action', () => {
             });
 
             expect(response.statusCode).toBe(400);
-            expect(response.body.error).toBe('Invalid Action entity');
+            expect(response.body.error).toBe("ActionType doesn't exist");
         });
         test('return 400 if the ActionType id is invalid', async () => {
             await actionTypeRepository.clear();
@@ -129,45 +123,41 @@ describe('Test /api/action', () => {
             await actionRepository.clear();
             await actionTypeRepository.clear();
 
-            await actionTypeRepository.insert(createActionTypeData());
-            const actionTypeResponse = await request(app).get('/api/actiontype');
-            const actionTypeId = actionTypeResponse.body[0]._id
+            const { _id } = await actionTypeRepository.insertOne(createActionTypeData());
 
             const response = await request(app).post('/api/action/').send({
-                ActionType: actionTypeId
+                ActionType: _id.toString()
             });
-   
+
             expect(response.statusCode).toBe(200);
 
             expect(response.body).toHaveProperty('_id');
             expect(typeof response.body._id).toBe("string");
 
             expect(response.body).toHaveProperty('ActionType');
-            expect(response.body.ActionType).toBe(actionTypeId);
+            expect(response.body.ActionType).toBe(_id.toString());
 
             expect(response.body).toHaveProperty('createdAt');
             expect(new Date(response.body.createdAt).getTime()).not.toBeNaN()
 
             expect(response.body.status).toBe(ActionStatusEnum.WAITING);
         });
-        
+
         test('createdAt is a server time in ISO 8601 format', async () => {
             await actionRepository.clear();
             await actionTypeRepository.clear();
 
-            await actionTypeRepository.insert(createActionTypeData());
-            const actionTypeResponse = await request(app).get('/api/actiontype');
-            const actionTypeId = actionTypeResponse.body[0]._id
+            const { _id } = await actionTypeRepository.insertOne(createActionTypeData());
 
             const response = await request(app).post('/api/action/').send({
-                ActionType: actionTypeId
+                ActionType: _id
             });
-   
+
             expect(response.statusCode).toBe(200);
 
-            const createdAt = new Date(response.body.createdAt)
+            const createdAt = new Date(response.body.createdAt).toISOString()
 
-            expect(createdAt.toISOString()).toBe(response.body.createdAt);
+            expect(createdAt).toBe(response.body.createdAt);
         });
     })
 })
