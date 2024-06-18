@@ -1,0 +1,1 @@
+export { BaseEntity, BaseState } from '../types/base'
