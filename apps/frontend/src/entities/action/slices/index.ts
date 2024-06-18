@@ -23,7 +23,7 @@ export const actionSlice = createSlice({
         })
         builder.addCase(fetchAllActions.fulfilled, (state, action) => {
             state.status = 'succeeded'
-            state.actions.push(...action.payload)
+            state.actions = [...action.payload]
         })
         builder.addCase(fetchAllActions.rejected, (state, action) => {
             state.error = action.error.message || null;
