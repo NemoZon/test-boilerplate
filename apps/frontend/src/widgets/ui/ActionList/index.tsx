@@ -3,6 +3,40 @@ import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { Box, Carousel } from '../../../shared';
 import { FC, useEffect } from 'react';
 
+const settings = {
+  infinite: false,
+  speed: 500,
+  slidesToShow: 6,
+  slidesToScroll: 1,
+  initialSlide: 0,
+  responsive: [
+    {
+      breakpoint: 1024,
+      settings: {
+        slidesToShow: 3,
+        slidesToScroll: 3,
+        infinite: true,
+        dots: true,
+      },
+    },
+    {
+      breakpoint: 600,
+      settings: {
+        slidesToShow: 2,
+        slidesToScroll: 2,
+        initialSlide: 2,
+      },
+    },
+    {
+      breakpoint: 480,
+      settings: {
+        slidesToShow: 1,
+        slidesToScroll: 1,
+      },
+    },
+  ],
+};
+
 export const ActionList: FC = () => {
   const dispatch = useAppDispatch();
   const { actions, status: actionStatus } = useAppSelector(
@@ -22,13 +56,16 @@ export const ActionList: FC = () => {
   }, [dispatch]);
 
   return (
-    <Carousel>
-      {actionTypes &&
-        actions &&
-        actions.map((elem) => {
+    <Carousel customSettings={settings}>
+      {Object.keys(actionTypes).length > 0 &&
+        actions.map((elem, i) => {
           const color = actionTypes[elem.ActionType].color || 'white';
           const content = actionTypes[elem.ActionType].name || 'Unknown';
-          return <Box backgroundColor={color} content={content} />;
+          return (
+            <div key={elem._id}>
+              <Box index={i} backgroundColor={color} content={content} />
+            </div>
+          );
         })}
     </Carousel>
   );

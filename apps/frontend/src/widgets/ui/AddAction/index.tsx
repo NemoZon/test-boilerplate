@@ -1,4 +1,4 @@
-import { fetchAllActionTypes } from '../../../entities';
+import { createAction, fetchAllActionTypes } from '../../../entities';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import React, { FC, useEffect } from 'react';
 import { ActionType } from '../../../entities/types';
@@ -43,8 +43,9 @@ export const AddAction: FC = () => {
   }, [dispatch]);
 
   const handleClick = (type: ActionType) => {
-    console.log(type);
+    dispatch(createAction(type._id));
   };
+
   return (
     <Container>
       <Text>Click to add to the queue</Text>
@@ -52,7 +53,11 @@ export const AddAction: FC = () => {
         {actionTypes &&
           Object.values(actionTypes).map((type) => {
             return (
-              <Button type="button" onClick={() => handleClick(type)}>
+              <Button
+                key={type._id}
+                type="button"
+                onClick={() => handleClick(type)}
+              >
                 <Box backgroundColor={type.color} content={type.name} />
               </Button>
             );
