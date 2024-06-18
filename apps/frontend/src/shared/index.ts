@@ -4,3 +4,4 @@ export { Logo } from "./ui/Logo"
 export { Timer, TimerTypeEnum } from "./ui/Timer"
 export { Carousel } from "./ui/Carousel"
 export { API_URL, $api } from './api/axios'
+export { URL_WSS } from './api/wss'

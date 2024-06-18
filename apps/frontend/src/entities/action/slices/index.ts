@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { BaseState } from '../../../shared/types';
 import { Action } from '../type';
 import { createAction, fetchAllActions } from '../actions';
@@ -16,7 +16,11 @@ const initialState: ActionState = {
 export const actionSlice = createSlice({
     name: 'action',
     initialState,
-    reducers: {},
+    reducers: {
+        deleteActionById: (state, action: PayloadAction<string>) => {
+            state.actions = state.actions.filter((elem) => elem._id !== action.payload)
+        }
+    },
     extraReducers: (builder) => {
         builder.addCase(fetchAllActions.pending, (state) => {
             state.status = 'loading'
@@ -42,5 +46,7 @@ export const actionSlice = createSlice({
         })
     },
 })
+
+export const { deleteActionById } = actionSlice.actions
 
 export const actionReducer = actionSlice.reducer
