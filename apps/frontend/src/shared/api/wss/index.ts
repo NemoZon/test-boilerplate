@@ -1,0 +1,1 @@
+export const URL_WSS = 'ws://localhost:8080'
