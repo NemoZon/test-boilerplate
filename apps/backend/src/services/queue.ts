@@ -1,16 +1,20 @@
 import { ActionData, actionRepository } from "../action";
+import http from 'http';
+import WebSocket from 'ws';
+import { Express } from 'express';
 
 export class Queue {
     private static IntervalId: NodeJS.Timer;
     private static nextAction: ActionData | null;
     private static delay: number;
+    private static countdown: number;
+    private static server: http.Server | undefined;
+    private static app: Express | undefined;
 
-    private static async deleteNextAction(): Promise<void> {        
+    private static async deleteNextAction(): Promise<void> {
         if (this.nextAction && this.nextAction._id) {
             await actionRepository.deleteOne(this.nextAction._id?.toString())
             this.nextAction = null
-        } else {
-            console.log('nextAction is undefined')
         }
     }
 
@@ -18,26 +22,50 @@ export class Queue {
         const actionList = await actionRepository.findAll();
         if (actionList.length > 0) {
             this.nextAction = actionList[0]
-        } else {
-            console.log('Queue is empty')
         }
     }
 
-    public static async start(delay: number): Promise<void> {
-        if (this.delay) {
+    public static async start(app: Express, delay: number): Promise<void> {
+        if (this.app) {
             console.error('Queue already running')
             return;
         }
         this.delay = delay;
+        this.app = app;
+        this.countdown = this.delay;
+        this.server = http.createServer(app);
 
-        actionRepository.setNextExecutionTime(delay)
+        const wss = new WebSocket.Server({ server: this.server });
 
         this.IntervalId = setInterval(async () => {
-            await this.setNextAction()
-            await this.deleteNextAction()
-            actionRepository.setNextExecutionTime(delay)
+            if (this.countdown > 0) {
+                this.countdown -=  1;
+            } else {
+                await this.setNextAction()
+                await this.deleteNextAction()
+                this.countdown = this.delay;
+            }
+        }, 1000);
 
-        }, delay)
+        wss.on('connection', (ws) => {            
+            const sendTime = async () => {
+                if (this.countdown > 0) {
+                    ws.send(JSON.stringify({ countdown: this.countdown }));
+                } else {
+                    ws.send(JSON.stringify({ countdown: this.countdown, lastDeleted: this.nextAction}));
+                }
+            };
+            ws.send(JSON.stringify({ countdown: this.countdown }));
+
+            this.IntervalId = setInterval(sendTime, 1000);
+
+            ws.on('close', () => {
+                clearInterval(this.IntervalId);
+            });
+        });
+        this.server.listen(8080, () => {
+            console.log(`WSS is listening on port ${8080}`);
+        });
     }
 
     public static async stop() {

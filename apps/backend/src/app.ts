@@ -17,4 +17,4 @@ app.use(cors(corsOptions))
 app.use('/api/actiontype', ActionTypeRouter)
 app.use('/api/action', ActionRouter)
 
-Queue.start(15000)
+Queue.start(app, 15)
