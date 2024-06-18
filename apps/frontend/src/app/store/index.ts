@@ -1,9 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit'
-import { actionReducer } from '../../entities'
+import { actionReducer, actionTypeReducer } from '../../entities'
 
 export const store = configureStore({
   reducer: {
-    action: actionReducer
+    action: actionReducer,
+    actionType: actionTypeReducer
   },
 })
 

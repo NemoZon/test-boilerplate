@@ -1,13 +1,13 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import { Action } from '../type'
+import { ActionType } from '../type'
 import { $api } from '../../../shared'
 import axios, { AxiosResponse } from 'axios'
 
-export const fetchAllActions = createAsyncThunk(
-    'actions/fetchAllActions',
-    async (): Promise<Action[]> => {
+export const fetchAllActionTypes = createAsyncThunk(
+    'actionTypes/fetchAllActionTypes',
+    async (): Promise<ActionType[]> => {
         try {
-            const response: AxiosResponse<Action[]> = await $api.get("/action")
+            const response: AxiosResponse<ActionType[]> = await $api.get("/actionType")
             return response.data
         } catch (error) {
             if (axios.isAxiosError(error)) {
@@ -17,6 +17,5 @@ export const fetchAllActions = createAsyncThunk(
             }
             throw new Error("An unexpected error occurred");
         }
-
     }
 )

@@ -9,7 +9,6 @@ interface ActionState extends BaseState {
 
 const initialState: ActionState = {
     status: 'idle',
-    statusCode: null,
     error: null,
     actions: [],
 }
@@ -19,11 +18,16 @@ export const actionSlice = createSlice({
     initialState,
     reducers: {},
     extraReducers: (builder) => {
-        // Add reducers for additional action types here, and handle loading state as needed
+        builder.addCase(fetchAllActions.pending, (state) => {
+            state.status = 'loading'
+        })
         builder.addCase(fetchAllActions.fulfilled, (state, action) => {
-            // Add user to the state array
             state.status = 'succeeded'
             state.actions.push(...action.payload)
+        })
+        builder.addCase(fetchAllActions.rejected, (state, action) => {
+            state.error = action.error.message || null;
+            state.status = 'failed'
         })
     },
 })
