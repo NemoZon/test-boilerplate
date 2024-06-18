@@ -27,7 +27,7 @@ export const Carousel: FC<PropsWithChildren<Props>> = ({
     slidesToScroll: 1,
   };
   return (
-    <Container width={width}>
+    <Container className="slider-container" width={width}>
       <Slider {...(customSettings || settings)}>{children}</Slider>
     </Container>
   );

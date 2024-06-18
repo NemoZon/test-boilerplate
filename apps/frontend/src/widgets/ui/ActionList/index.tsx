@@ -7,6 +7,7 @@ import styled from 'styled-components';
 const settings = {
   infinite: false,
   speed: 500,
+  dots: true,
   slidesToShow: 6,
   slidesToScroll: 1,
   initialSlide: 0,
@@ -37,7 +38,6 @@ const settings = {
     },
   ],
 };
-
 
 const Container = styled.div`
   display: flex;

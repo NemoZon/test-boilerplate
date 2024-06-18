@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
-import { ActionList } from '../../widgets';
-import { AddAction } from '../../widgets/ui/AddAction';
+import { ActionList, ExecutionTimer } from '../../widgets';
+import { AddAction } from '../../widgets/';
 import styled from 'styled-components';
 import { Logo } from '../../shared';
 
@@ -24,13 +24,25 @@ const TopContainer = styled.div`
   margin: 30px 0 0 0;
 `;
 
+const CenterContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 0 30px 0;
+`;
+
 export const Queue: FC = () => {
   return (
     <Container>
       <TopContainer>
         <Logo title={'QUEUE'} />
       </TopContainer>
-      <ActionList />
+      <div>
+        <CenterContainer>
+          <ExecutionTimer />
+        </CenterContainer>
+        <ActionList />
+      </div>
       <BottomContainer>
         <AddAction />
       </BottomContainer>
