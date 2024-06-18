@@ -4,10 +4,13 @@ import styled from 'styled-components';
 type Props = {
   content: string;
   backgroundColor: string;
+  index?: number | string;
 };
 
 const Container = styled.div`
   display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 const Content = styled.div<{ backgroundColor: string }>`
   background-color: ${(props) => props.backgroundColor};
@@ -20,9 +23,15 @@ const Content = styled.div<{ backgroundColor: string }>`
   align-items: center;
 `;
 
-export const Box: FC<Props> = ({ content, backgroundColor }) => {
+const Text = styled.p<{ width?: string }>`
+  text-align: center;
+  font-weight: 600;
+`;
+
+export const Box: FC<Props> = ({ content, backgroundColor, index }) => {
   return (
     <Container>
+      {index !== undefined && <Text>{index}</Text>}
       <Content backgroundColor={backgroundColor}>
         <p>Action {content}</p>
       </Content>
