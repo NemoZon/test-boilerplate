@@ -17,6 +17,24 @@ export const fetchAllActions = createAsyncThunk(
             }
             throw new Error("An unexpected error occurred");
         }
+    }
+)
 
+export const createAction = createAsyncThunk(
+    'actions/createAction',
+    async (ActionTypeId: string): Promise<Action> => {
+        try {
+            const response: AxiosResponse<Action> = await $api.post("/action", {
+                ActionType: ActionTypeId
+            })
+            return response.data
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                if (error.response) {
+                    throw new Error(error.response.data.error);
+                }
+            }
+            throw new Error("An unexpected error occurred");
+        }
     }
 )
