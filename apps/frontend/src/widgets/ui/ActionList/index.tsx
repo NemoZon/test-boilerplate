@@ -2,6 +2,7 @@ import { fetchAllActionTypes, fetchAllActions } from '../../../entities';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { Box, Carousel } from '../../../shared';
 import { FC, useEffect } from 'react';
+import styled from 'styled-components';
 
 const settings = {
   infinite: false,
@@ -37,6 +38,18 @@ const settings = {
   ],
 };
 
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const Text = styled.h1`
+  text-align: center;
+  margin-bottom: 10px;
+`;
+
 export const ActionList: FC = () => {
   const dispatch = useAppDispatch();
   const { actions, status: actionStatus } = useAppSelector(
@@ -56,17 +69,20 @@ export const ActionList: FC = () => {
   }, [dispatch]);
 
   return (
-    <Carousel customSettings={settings}>
-      {Object.keys(actionTypes).length > 0 &&
-        actions.map((elem, i) => {
-          const color = actionTypes[elem.ActionType].color || 'white';
-          const content = actionTypes[elem.ActionType].name || 'Unknown';
-          return (
-            <div key={elem._id}>
-              <Box index={i} backgroundColor={color} content={content} />
-            </div>
-          );
-        })}
-    </Carousel>
+    <Container>
+      <Text>Total elements: {actions.length}</Text>
+      <Carousel customSettings={settings}>
+        {Object.keys(actionTypes).length > 0 &&
+          actions.map((elem, i) => {
+            const color = actionTypes[elem.ActionType].color || 'white';
+            const content = actionTypes[elem.ActionType].name || 'Unknown';
+            return (
+              <div key={elem._id}>
+                <Box index={i} backgroundColor={color} content={content} />
+              </div>
+            );
+          })}
+      </Carousel>
+    </Container>
   );
 };

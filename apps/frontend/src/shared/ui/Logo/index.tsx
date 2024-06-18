@@ -12,14 +12,14 @@ const Container = styled.div`
 
 const Img = styled.img`
   position: absolute;
-  z-index: -1;
   left: 0;
   height: 150%;
   bottom: 0;
-  transform: translateY(1em)
+  transform: translateY(1em);
 `;
 
 const Title = styled.h1`
+  position: relative;
   font-weight: bold;
   font-size: 64px;
   margin-left: 25px;

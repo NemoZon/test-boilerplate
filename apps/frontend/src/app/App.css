@@ -43,3 +43,7 @@ table {
     border-collapse: collapse;
     border-spacing: 0;
 }
+#root {
+    background-color: antiquewhite;
+    min-height: 100vh;
+}

@@ -1,21 +1,12 @@
-import React, { useEffect } from 'react';
-import { Arrow, Box, Logo } from '../shared';
+import React from 'react';
 import './App.css';
-import { $api } from '../shared/api';
-import { AxiosResponse } from 'axios';
+import { Queue } from '../pages';
+
 
 const App = () => {
-  useEffect(() => {
-    const res: Promise<AxiosResponse<{ message: string }>> = $api.get('/');
-    res.then((r) => {
-      console.log(r.data.message);
-    });
-  }, []);
   return (
-    <div>
-      <Arrow />
-      <Box content="sdvsdv" backgroundColor="red" />
-      <Logo title="QUEUE" />
+    <div style={{ width: '100%', minHeight: '100%' }}>
+      <Queue />
     </div>
   );
 };
