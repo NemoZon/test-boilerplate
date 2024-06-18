@@ -5,6 +5,7 @@
   "scripts": {},
   "private": true,
   "dependencies": {
+    "@reduxjs/toolkit": "^2.2.5",
     "@types/cors": "^2.8.17",
     "@types/supertest": "^6.0.2",
     "axios": "^1.6.0",
@@ -15,6 +16,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-is": "18.2.0",
+    "react-redux": "^9.1.2",
     "styled-components": "5.3.6",
     "tslib": "^2.3.0",
     "vite-plugin-checker": "^0.6.4"
