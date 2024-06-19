@@ -51,16 +51,6 @@ describe('Test /api/action', () => {
             expect(response.body).toEqual([]);
         });
     })
-    describe('GET /api/action/nextExecutionTime', () => {
-        test('return 200 and date in ISO 8601 format', async () => {
-            const response = await request(app).get('/api/action/nextExecutionTime');
-            const now = new Date()
-            expect(response.statusCode).toBe(200);
-
-            expect(new Date(response.body)).not.toBeNaN();
-            expect(new Date(response.body) >= now).toBeTruthy();
-        });
-    })
     describe('GET /api/action/:id', () => {
         test('return 400 if the id is not a valid ObjectId', async () => {
             const response = await request(app).get('/api/action/hello');

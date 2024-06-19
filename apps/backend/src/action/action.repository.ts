@@ -5,16 +5,6 @@ import { actionTypeRepository } from "../actionType";
 
 class ActionRepository {
     private actionCollection = mongodb.collection<ActionData>('Action');
-    private nextExecutionTime: Date;
-
-    public setNextExecutionTime(delay: number): void {
-        const now = new Date();
-        this.nextExecutionTime = new Date(now.getTime() + delay);
-    }
-
-    public getNextExecutionTime(): Date {
-        return this.nextExecutionTime;
-    }
 
     public async findAll(): Promise<ActionData[]> {
         const result = await this.actionCollection.find({}).toArray();
