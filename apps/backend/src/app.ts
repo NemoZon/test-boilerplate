@@ -3,6 +3,7 @@ import cors, { CorsOptions } from 'cors';
 import { ActionTypeRouter } from './actionType/';
 import { ActionRouter } from './action/action.router';
 import { Queue } from './services/queue';
+import { CreditRouter } from './credit';
 
 export const app: Express = express();
 
@@ -16,5 +17,6 @@ app.use(cors(corsOptions))
 
 app.use('/api/actiontype', ActionTypeRouter)
 app.use('/api/action', ActionRouter)
+app.use('/api/credit', CreditRouter)
 
 Queue.start(app, 15)
