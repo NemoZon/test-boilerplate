@@ -1,8 +1,7 @@
 import { ActionData, actionRepository } from "../action";
-import http from 'http';
-import WebSocket from 'ws';
 import { Express } from 'express';
 import { ObjectId } from "mongodb";
+import { WS } from "./ws";
 
 export class Queue {
     private static IntervalId: NodeJS.Timer;
@@ -10,7 +9,6 @@ export class Queue {
     private static lastDeleted: ObjectId | undefined;
     private static delay: number;
     private static countdown: number;
-    private static server: http.Server | undefined;
     private static app: Express | undefined;
 
     private static async deleteNextAction(): Promise<void> {
@@ -39,10 +37,14 @@ export class Queue {
         this.delay = delay;
         this.app = app;
         this.countdown = this.delay;
-        this.server = http.createServer(app);
 
-        const wss = new WebSocket.Server({ server: this.server });
+        // creating WS object
+        const ws = new WS();
 
+        // creating WS server
+        ws.create(app)
+
+        // sending data every second
         this.IntervalId = setInterval(async () => {
             if (this.countdown > 0) {
                 this.countdown -= 1;
@@ -51,27 +53,18 @@ export class Queue {
                 await this.deleteNextAction()
                 this.countdown = this.delay;
             }
+            ws.sendDataToAllClients({ countdown: this.countdown, lastDeleted: this.lastDeleted })
+            this.lastDeleted = undefined
         }, 1000);
 
-        wss.on('connection', (ws) => {
-            const sendTime = async () => {
-                if (this.countdown > 0) {
-                    ws.send(JSON.stringify({ countdown: this.countdown }));
-                } else {
-                    ws.send(JSON.stringify({ countdown: this.countdown, lastDeleted: this.lastDeleted?.toString() }));
-                }
-            };
-            ws.send(JSON.stringify({ countdown: this.countdown }));
-
-            this.IntervalId = setInterval(sendTime, 1000);
-
-            ws.on('close', () => {
-                clearInterval(this.IntervalId);
-            });
+        // sending the timer on client connection
+        ws.onConnection((websocket) => {
+            const data = JSON.stringify({ countdown: this.countdown });
+            websocket.send(data);
         });
-        this.server.listen(8080, () => {
-            console.log(`WSS is listening on port ${8080}`);
-        });
+
+        // starting server
+        ws.start(process.env.WSS_PORT || 8000)
     }
 
     public static async stop() {
