@@ -2,12 +2,14 @@ import { ActionData, actionRepository } from "../action";
 import { Express } from 'express';
 import { ObjectId } from "mongodb";
 import { WS } from "./ws";
+import { CreditData, creditRepository } from "../credit";
 
 export class Queue {
     private static IntervalId: NodeJS.Timer;
     private static nextAction: ActionData | null;
     private static lastDeleted: ObjectId | undefined;
-    private static delay: number;
+    private static creditsRefreshSeconds: number;
+    private static credits: CreditData[];
     private static countdown: number;
     private static app: Express | undefined;
 
@@ -22,6 +24,10 @@ export class Queue {
         }
     }
 
+    private static async refreshCredits(): Promise<void> {
+        this.credits = await creditRepository.refreshAll()
+    }
+
     private static async setNextAction(): Promise<void> {
         const actionList = await actionRepository.findAll();
         if (actionList.length > 0) {
@@ -29,14 +35,23 @@ export class Queue {
         }
     }
 
-    public static async start(app: Express, delay: number): Promise<void> {
+    private static secondsToObject(s: number): { minutes: number, seconds: number } {
+        const minutes = Math.floor(s / 60)
+        const seconds = s % 60
+        return {
+            minutes,
+            seconds
+        }
+    }
+
+    public static async start(app: Express, delay: number, creditsRefreshSeconds: number): Promise<void> {
         if (this.app) {
             console.error('Queue already running')
             return;
         }
-        this.delay = delay;
         this.app = app;
-        this.countdown = this.delay;
+        this.countdown = delay;
+        this.creditsRefreshSeconds = creditsRefreshSeconds;
 
         // creating WS object
         const ws = new WS();
@@ -46,20 +61,40 @@ export class Queue {
 
         // sending data every second
         this.IntervalId = setInterval(async () => {
+            // action execution timer
             if (this.countdown > 0) {
                 this.countdown -= 1;
             } else {
                 await this.setNextAction()
                 await this.deleteNextAction()
-                this.countdown = this.delay;
+                this.countdown = delay;
             }
-            ws.sendDataToAllClients({ countdown: this.countdown, lastDeleted: this.lastDeleted })
+
+            // refresh credits timer
+            if (this.creditsRefreshSeconds > 0) {
+                this.creditsRefreshSeconds -= 1;
+            } else {
+                await this.refreshCredits();
+                this.creditsRefreshSeconds = creditsRefreshSeconds;
+            }
+
+            ws.sendDataToAllClients({
+                countdown: this.countdown,
+                lastDeleted: this.lastDeleted,
+                creditsRefreshTime: this.secondsToObject(this.creditsRefreshSeconds),
+                credits: this.credits
+            })
             this.lastDeleted = undefined
         }, 1000);
 
         // sending the timer on client connection
         ws.onConnection((websocket) => {
-            const data = JSON.stringify({ countdown: this.countdown });
+            const data = JSON.stringify({
+                countdown: this.countdown,
+                lastDeleted: this.lastDeleted,
+                creditsRefreshTime: this.secondsToObject(this.creditsRefreshSeconds),
+                credits: this.credits
+            });
             websocket.send(data);
         });
 

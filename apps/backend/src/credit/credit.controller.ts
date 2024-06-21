@@ -44,40 +44,6 @@ export class CreditController {
         }
     }
 
-    public static async replace(req: Request, res: Response): Promise<void> {
-        try {
-            const data = req.body
-            if (!data?.ActionType) {
-                res.status(400).json({ error: "ActionType doesn't exist" });
-                return;
-            }
-            const objectIdRegex = /[0-9a-f]{24}/
-            if (!objectIdRegex.test(data.ActionType)) {
-                res.status(400).json({ error: "ActionType is not a valid ObjectId" });
-                return;
-            }
-
-            const creditData: CreditData = {
-                ActionType: data.ActionType,
-                quantity: 0.8 + Math.random() * 0.2
-            }
-
-            const result = await creditRepository.replace(creditData);
-            if (result) {
-                res.status(200).json(result);
-            } else {
-                res.status(404).json({ error: 'No action found' });
-            }
-        } catch (error) {
-            console.error("Failed to fetch credits: ", error);
-            if (error instanceof Error) {
-                res.status(500).json({ error: "Internal server error", details: error.message });
-            } else {
-                res.status(500).json({ error: "Unknown error" });
-            }
-        }
-    }
-
     public static async createOne(req: Request, res: Response): Promise<void> {
         try {
             if (!req.body?.ActionType) {

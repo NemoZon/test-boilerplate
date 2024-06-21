@@ -19,6 +19,10 @@ const Title = styled.p<{ customCSS?: FlattenSimpleInterpolation }>`
   ${($props) => $props?.customCSS || ''}
 `;
 
+export const numberToTimeFormat = (n: number): string => {
+  return n < 10 && n >= 0 ? `0${n}` : `${n}`;
+};
+
 export const Timer: FC<Props> = ({
   endTime,
   customCSS,
@@ -26,10 +30,6 @@ export const Timer: FC<Props> = ({
   type = TimerTypeEnum.Default,
 }) => {
   const [timeToPrint, setTimeToPrint] = useState<string>('');
-
-  const numberToTimeFormat = (n: number): string => {
-    return n < 10 && n >= 0 ? `0${n}` : `${n}`;
-  };
 
   const getTime = (msLeft: number) => {
     if (type === TimerTypeEnum.Default) {

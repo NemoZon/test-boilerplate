@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { ActionList, ExecutionTimer } from '../../widgets';
+import { ActionList, ExecutionTimer, RefreshTimer } from '../../widgets';
 import { AddAction } from '../../widgets/';
 import styled from 'styled-components';
 import { Logo } from '../../shared';
@@ -19,8 +19,9 @@ const BottomContainer = styled.div`
 
 const TopContainer = styled.div`
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
+  width: 50%;
   margin: 30px 0 0 0;
 `;
 
@@ -31,11 +32,18 @@ const CenterContainer = styled.div`
   margin: 0 0 30px 0;
 `;
 
+const LogoContainer = styled.div`
+  transform: translateX(50%);
+`;
+
 export const Queue: FC = () => {
   return (
     <Container>
       <TopContainer>
-        <Logo title={'QUEUE'} />
+        <RefreshTimer />
+        <LogoContainer>
+          <Logo title={'QUEUE'} />
+        </LogoContainer>
       </TopContainer>
       <div>
         <CenterContainer>

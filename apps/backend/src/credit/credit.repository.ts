@@ -67,6 +67,25 @@ class CreditRepository {
         return { _id: insertOneResult.insertedId, ...data }
     }
 
+    public async refreshAll(): Promise<CreditData[]> {
+        const ActionTypes = await actionTypeRepository.findAll()
+        const result: CreditData[] = []
+
+        for (let i = 0; i < ActionTypes.length; i++) {
+            const type = ActionTypes[i]
+            if (type._id) {
+                const newCredit = await this.replace({
+                    ActionType: type._id,
+                    quantity: (0.8 + Math.random() * 0.2) * type.max
+                })
+                if (newCredit) {
+                    result.push(newCredit)
+                }
+            }
+        }
+        return result
+    }
+
     public async deleteOne(_id: string): Promise<Partial<{ _id: ObjectId, error: string }>> {
         const credit = await this.findById(_id)
         if (!credit) {

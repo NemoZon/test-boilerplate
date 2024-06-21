@@ -19,4 +19,4 @@ app.use('/api/actiontype', ActionTypeRouter)
 app.use('/api/action', ActionRouter)
 app.use('/api/credit', CreditRouter)
 
-Queue.start(app, 15)
+Queue.start(app, 15, 600)

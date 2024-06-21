@@ -1,10 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { actionReducer, actionTypeReducer } from '../../entities'
+import { creditReducer } from '../../entities/credits/slices'
 
 export const store = configureStore({
   reducer: {
     action: actionReducer,
-    actionType: actionTypeReducer
+    actionType: actionTypeReducer,
+    creditReducer: creditReducer,
   },
 })
 
