@@ -1,9 +1,17 @@
-import { mongoClient } from '../../src/services/mongodb';
-import { actionTypeRepository, createActionTypeData } from '../../src/actionType'
-import { app } from '../../src/app'
+import { actionTypeRepository, createActionTypeData } from '../../../src/actionType'
+import { app } from '../../../src/app'
 import request from 'supertest';
-import { actionRepository, createActionData } from '../../src/action';
-import { ActionStatusEnum } from '../../src/action'
+import { actionRepository, createActionData } from '../../../src/action';
+import { ActionStatusEnum } from '../../../src/action'
+import { mongoClient } from '../../../src/services/mongodb';
+
+beforeAll(async () => {
+    await mongoClient.connect();
+});
+
+beforeEach(async () => {
+    await mongoClient.db(process.env.DB_NAME).dropDatabase();
+});
 
 afterAll(async () => {
     await mongoClient.close();
