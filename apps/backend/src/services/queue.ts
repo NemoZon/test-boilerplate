@@ -30,9 +30,29 @@ export class Queue {
 
     private static async setNextAction(): Promise<void> {
         const actionList = await actionRepository.findAll();
-        if (actionList.length > 0) {
-            this.nextAction = actionList[0]
+        let i = 0
+        let result: ActionData | null = null
+        while (i < actionList.length && !result) {
+            const action = actionList[i]
+            const credit = this.credits.find((elem) => elem.ActionType.toString() === action.ActionType.toString())
+            
+            if (credit && credit._id && credit.quantity > 0) {
+                const creditUpdated = await creditRepository.decrementQuantity(credit._id?.toString())
+                if (creditUpdated) {
+                    this.credits = this.credits.map((elem) => {
+                        if (creditUpdated._id.toString() === elem._id?.toString()) {
+                            return creditUpdated
+                        } else {
+                            return elem
+                        }
+                    })                    
+                    result = action
+                }
+            }
+            i++
         }
+        
+        this.nextAction = result
     }
 
     private static secondsToObject(s: number): { minutes: number, seconds: number } {

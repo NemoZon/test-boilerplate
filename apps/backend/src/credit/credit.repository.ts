@@ -1,4 +1,4 @@
-import { ObjectId } from "mongodb";
+import { ObjectId, WithId } from "mongodb";
 import { mongodb } from "../services/mongodb";
 import { CreditData } from "./credit";
 import { actionTypeRepository } from "../actionType";
@@ -46,6 +46,14 @@ class CreditRepository {
             _id: new ObjectId(id),
         });
 
+        return result;
+    }
+
+    public async decrementQuantity(id: string): Promise<WithId<CreditData> | null> {
+        const result = await this.creditCollection.findOneAndUpdate(
+            { _id: new ObjectId(id) },
+            { $inc: { quantity: -1 } },
+        );
         return result;
     }
 
