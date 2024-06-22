@@ -78,7 +78,11 @@ export const ActionList: FC = () => {
             const content = actionTypes[elem.ActionType].name || 'Unknown';
             return (
               <div key={elem._id}>
-                <Box index={i} backgroundColor={color} content={content} />
+                <Box
+                  index={i}
+                  backgroundColor={color}
+                  content={`Action ${content}`}
+                />
               </div>
             );
           })}

@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { ActionList, ExecutionTimer, RefreshTimer } from '../../widgets';
+import { ActionList, Coins, ExecutionTimer, RefreshTimer } from '../../widgets';
 import { AddAction } from '../../widgets/';
 import styled from 'styled-components';
 import { Logo } from '../../shared';
@@ -41,6 +41,7 @@ export const Queue: FC = () => {
     <Container>
       <TopContainer>
         <RefreshTimer />
+        <Coins />
         <LogoContainer>
           <Logo title={'QUEUE'} />
         </LogoContainer>

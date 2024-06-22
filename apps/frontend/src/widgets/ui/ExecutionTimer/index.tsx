@@ -14,12 +14,12 @@ export const ExecutionTimer: FC = () => {
   const [countdown, setCountdown] = useState(null);
 
   useWebSocket((event) => {
-    const data = JSON.parse(event.data);    
+    const data = JSON.parse(event.data);
     setCountdown(data.countdown);
     if (data.lastDeleted) {
       dispatch(deleteActionById(data.lastDeleted));
     }
-  })
+  });
 
   return <Text>Next execution: {countdown}s</Text>;
 };

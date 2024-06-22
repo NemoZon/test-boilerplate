@@ -1,5 +1,6 @@
 import { Response, Request } from "express";
 import { CreditData, creditRepository } from "./index";
+import { actionTypeRepository } from "../actionType";
 
 export class CreditController {
     public static async getAll(req: Request, res: Response): Promise<void> {
@@ -55,6 +56,14 @@ export class CreditController {
                 res.status(400).json({ error: "ActionType is not a valid ObjectId" });
                 return;
             }
+
+            const actionType = await actionTypeRepository.findById(req.body.ActionType)
+
+            if (!actionType) {
+                res.status(403).json({ error: "ActionType doesn't exist" });
+                return;
+            }
+
             const exists = await creditRepository.findByActionType(req.body.ActionType)
 
             if (exists) {
@@ -64,7 +73,7 @@ export class CreditController {
 
             const creditData: CreditData = {
                 ActionType: req.body.ActionType,
-                quantity: 0.8 + Math.random() * 0.2
+                quantity: Math.ceil((0.8 + Math.random() * 0.2) * actionType.max)
             }
 
             const { _id, error } = await creditRepository.insertOne(creditData)

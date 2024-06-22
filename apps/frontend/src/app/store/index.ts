@@ -6,7 +6,7 @@ export const store = configureStore({
   reducer: {
     action: actionReducer,
     actionType: actionTypeReducer,
-    creditReducer: creditReducer,
+    credit: creditReducer,
   },
 })
 

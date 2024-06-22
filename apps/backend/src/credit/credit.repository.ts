@@ -76,7 +76,7 @@ class CreditRepository {
             if (type._id) {
                 const newCredit = await this.replace({
                     ActionType: type._id,
-                    quantity: (0.8 + Math.random() * 0.2) * type.max
+                    quantity: Math.ceil((0.8 + Math.random() * 0.2) * type.max)
                 })
                 if (newCredit) {
                     result.push(newCredit)

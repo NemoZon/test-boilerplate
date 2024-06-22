@@ -52,6 +52,7 @@ export class Queue {
         this.app = app;
         this.countdown = delay;
         this.creditsRefreshSeconds = creditsRefreshSeconds;
+        await this.refreshCredits();
 
         // creating WS object
         const ws = new WS();
