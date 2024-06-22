@@ -26,6 +26,7 @@ export class Queue {
 
     private static async refreshCredits(): Promise<void> {
         this.credits = await creditRepository.refreshAll()
+        await this.setNextAction();
     }
 
     private static async setNextAction(): Promise<void> {
@@ -35,7 +36,7 @@ export class Queue {
         while (i < actionList.length && !result) {
             const action = actionList[i]
             const credit = this.credits.find((elem) => elem.ActionType.toString() === action.ActionType.toString())
-            
+
             if (credit && credit._id && credit.quantity > 0) {
                 const creditUpdated = await creditRepository.decrementQuantity(credit._id?.toString())
                 if (creditUpdated) {
@@ -45,13 +46,13 @@ export class Queue {
                         } else {
                             return elem
                         }
-                    })                    
+                    })
                     result = action
                 }
             }
             i++
         }
-        
+
         this.nextAction = result
     }
 
