@@ -68,6 +68,12 @@ export const ActionList: FC = () => {
     }
   }, [dispatch]);
 
+  if (actions.length > 30) {
+    settings.slidesToScroll = 6;
+  } else {
+    settings.slidesToScroll = 1;
+  }
+
   return (
     <Container>
       <Text>Total elements: {actions.length}</Text>
@@ -79,6 +85,7 @@ export const ActionList: FC = () => {
             return (
               <div key={elem._id}>
                 <Box
+                  key={elem._id}
                   index={i}
                   backgroundColor={color}
                   content={`Action ${content}`}
