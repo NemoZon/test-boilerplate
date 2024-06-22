@@ -8,7 +8,7 @@ beforeAll(async () => {
     await mongoClient.connect();
 });
 
-beforeEach(async () => {
+afterEach(async () => {
     await mongoClient.db(process.env.DB_NAME).dropDatabase();
 });
 

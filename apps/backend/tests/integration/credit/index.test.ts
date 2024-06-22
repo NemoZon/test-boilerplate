@@ -8,7 +8,7 @@ beforeAll(async () => {
   await mongoClient.connect();
 });
 
-beforeEach(async () => {
+afterEach(async () => {
   await mongoClient.db(process.env.DB_NAME).dropDatabase();
 });
 
@@ -19,7 +19,6 @@ afterAll(async () => {
 describe('Test /api/credit', () => {
   describe('GET /api/credit', () => {
     test('return a status 200 and a list of credits with correct properties and data types', async () => {
-      await creditRepository.clear()
       await creditRepository.populate(3, createCreditData)
       const response = await request(app).get('/api/credit');
 
