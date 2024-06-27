@@ -1,6 +1,4 @@
 import Slider, { Settings } from 'react-slick';
-import 'slick-carousel/slick/slick.css';
-import 'slick-carousel/slick/slick-theme.css';
 
 import React, { FC, PropsWithChildren } from 'react';
 import styled from 'styled-components';
