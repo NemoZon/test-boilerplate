@@ -1,1 +1,1 @@
-export const URL_WSS = 'wss://test-boilerplate-gqxl.onrender.com:8080'
+export const URL_WSS = 'https://test-boilerplate-gqxl.onrender.com/ws'

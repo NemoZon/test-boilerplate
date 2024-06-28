@@ -21,7 +21,7 @@ app.use('/api/action', ActionRouter)
 app.use('/api/credit', CreditRouter)
 
 app.use('/ws', createProxyMiddleware({
-    target: `ws://${process.env.HOST}:${process.env.WSS_PORT}`,
+    target: `ws://test-boilerplate-gqxl:8080`,
     changeOrigin: true,
     ws: true
   }));
